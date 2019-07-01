@@ -20,23 +20,23 @@ You can manage the connection as bellow:
 ##### pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.  
 ##### request - creates new connection per each request, and automatically closes it at the response end.   
 
-'''c
+```c
 var myConnection  = require('express-myconnection')  
 app.use(myConnection(mysql, dbOptions, 'pool'))  
-'''
+```
 
 # Guide  
 install guide for kubernetes infra structure  
 
-## make hearbeat cluster based on EKS  
+### make hearbeat cluster based on EKS  
 $ eksctl create k8s/cluster -f cluser.yaml  
 
 # MySQL  
 It is used for the storage of mysql but it will be moved to a managed storage in order to move a production level later.  
-## allocate a persistent volume  
+### allocate a persistent volume  
 $ kubectl create -f k8s/mysql/local-volumes.yaml  
 $ kubectl create -f k8s/mysql/mysql-pv-claim.yaml  
-## create mysql  
+### create mysql  
 $ kubectl create -f k8s/mysql/mysql.yaml  
 $ kubectl create -f k8s/mysql-service.yaml  
 #### [Reference](https://github.com/hongjsk/spring-petclinic-kubernetes/tree/master/k8s/mysql)  
@@ -47,19 +47,19 @@ export DB_PASS='passwd';
 export DB_NAME='database';  
 
 
-## create mysql-credential Secret
+### create mysql-credential Secret
 $ kubectl create secret generic mysql-credential --from-file=./username --from-file=./password
-## set configmap
+### set configmap
 $ kubectl create -f k8s/mysql-configmap.yaml
-## get the public ip address or domain 
+### get the public ip address or domain 
 $ kubectl get service -o wide
-## check the connectivity of mysql using the earn address of the mysql server
+### check the connectivity of mysql using the earn address of the mysql server
 $ mysql -h [server address] -u root -p
-### check the prompt of mysql. 
-### To-Do: I will upgrade this part using helm in order to easy deploment
+#### check the prompt of mysql. 
+#### To-Do: I will upgrade this part using helm in order to easy deploment
 
 [Acquisition API]
-## initialize package.json
+### initialize package.json
 $ npm init
 $ npm install --save mysql express express-myconnection -f
 
