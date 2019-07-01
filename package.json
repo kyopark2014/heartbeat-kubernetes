@@ -1,0 +1,27 @@
+{
+  "name": "heartbeat",
+  "version": "1.0.0",
+  "description": "It is a measurement and analytic system for heartbeat",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyopark2014/heartbeat.git"
+  },
+  "author": "John Park",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kyopark2014/heartbeat/issues"
+  },
+  "homepage": "https://github.com/kyopark2014/heartbeat#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-myconnection": "^1.0.4",
+    "jq": "^1.7.2",
+    "mysql": "^2.17.1",
+    "node-datetime": "^2.1.2"
+  }
+}

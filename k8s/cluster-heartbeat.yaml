@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: heartbeat
+  region: eu-west-2
+
+nodeGroups:
+  - name: ng-heartbeat
+    instanceType: t2.medium
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 8
+    ssh:
+      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key

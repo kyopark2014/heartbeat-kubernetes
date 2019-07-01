@@ -1,0 +1,24 @@
+heartbeat.yaml
+apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: heartbeat
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: heartbeat-api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: heartbeat-api
+    spec:
+      containers:
+      - image: own repository 
+        imagePullPolicy: Always
+        name: heartbeat
+        ports:
+        - containerPort: 8080
+          name: heartbeat
