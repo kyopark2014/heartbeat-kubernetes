@@ -3,7 +3,7 @@ It is a measurement and analytic system for heart beat in order to help managing
 At first, I used the connection directly. But I realized it needs to manage the connection between the application and mysql server.
 So, I recommend to use myconnection (https://www.npmjs.com/package/express-myconnection)
 
-## the case of directly connection which has a problem to sustain the connection 
+the case of directly connection which has a problem to sustain the connection 
 const express = require('express');
 // Create connection
 var mysql      = require('mysql');
@@ -15,9 +15,9 @@ db.connect( (err) => {
 });
 
 You can manage the connection as bellow:
-### single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
-### pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.
-### request - creates new connection per each request, and automatically closes it at the response end.
+#### single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
+#### pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.
+#### request - creates new connection per each request, and automatically closes it at the response end.
 I prefer to use the option, pool.
 
 var myConnection  = require('express-myconnection')
