@@ -4,6 +4,7 @@ At first, I used the connection directly. But I realized it needs to manage the 
 So, I recommend to use myconnection (https://www.npmjs.com/package/express-myconnection)
 
 the case of directly connection which has a problem to sustain the connection 
+```c
 const express = require('express');
 // Create connection
 var mysql      = require('mysql');
@@ -12,38 +13,38 @@ var db = mysql.createConnection(config);
 db.connect( (err) => {
     if(err) { throw err; }
     console.log('MySQL Connected...');
-});
+});  ```
 
-You can manage the connection as bellow:
-#### single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
-#### pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.
-#### request - creates new connection per each request, and automatically closes it at the response end.
-I prefer to use the option, pool.
+You can manage the connection as bellow:  
+##### single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.  
+##### pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.  
+##### request - creates new connection per each request, and automatically closes it at the response end.   
 
-var myConnection  = require('express-myconnection')
-app.use(myConnection(mysql, dbOptions, 'pool'))
+'''c
+var myConnection  = require('express-myconnection')  
+app.use(myConnection(mysql, dbOptions, 'pool'))  
+'''
 
+# Guide  
+install guide for kubernetes infra structure  
 
-# Guide
-install guide for kubernetes infra structure
+## make hearbeat cluster based on EKS  
+$ eksctl create k8s/cluster -f cluser.yaml  
 
-## make hearbeat cluster based on EKS 
-$ eksctl create k8s/cluster -f cluser.yaml
-
-# MySQL
-It is used for the storage of mysql but it will be moved to a managed storage in order to move a production level later.
-## allocate a persistent volume
-$ kubectl create -f k8s/mysql/local-volumes.yaml
-$ kubectl create -f k8s/mysql/mysql-pv-claim.yaml
-## create mysql
-$ kubectl create -f k8s/mysql/mysql.yaml 
-$ kubectl create -f k8s/mysql-service.yaml
-### Reference: https://github.com/hongjsk/spring-petclinic-kubernetes/tree/master/k8s/mysql
-### Setup the database in .bashrc
-export DB_HOST='abcedfefewfdfdfdf-158449500.eu-west-2.elb.amazonaws.com';
-export DB_USER='root';
-export DB_PASS='passwd';
-export DB_NAME='database';
+# MySQL  
+It is used for the storage of mysql but it will be moved to a managed storage in order to move a production level later.  
+## allocate a persistent volume  
+$ kubectl create -f k8s/mysql/local-volumes.yaml  
+$ kubectl create -f k8s/mysql/mysql-pv-claim.yaml  
+## create mysql  
+$ kubectl create -f k8s/mysql/mysql.yaml  
+$ kubectl create -f k8s/mysql-service.yaml  
+#### [Reference](https://github.com/hongjsk/spring-petclinic-kubernetes/tree/master/k8s/mysql)  
+#### Setup the database in .bashrc  
+export DB_HOST='abcedfefewfdfdfdf-158449500.eu-west-2.elb.amazonaws.com';  
+export DB_USER='root';  
+export DB_PASS='passwd';  
+export DB_NAME='database';  
 
 
 ## create mysql-credential Secret
