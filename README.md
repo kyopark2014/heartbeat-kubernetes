@@ -96,9 +96,11 @@ $ docker build -t heartbeat:v1 .
 $ kubectl create -f k8s/heartbeat.yaml  
 To-do: I wil change the repository based on gitbub. Now I am still using RDS in Amazon.  
 
-[Troubleshoot]  
+
+
+# Troubleshoot
 ### Error: listen EADDRINUSE: address already in use :::8080
-There is a application which is using 8080. 
-Check the process and then kill it.
+There is a zombie process using 8080. 
+So, find the process and then kill it as bellow:
 #### $ sudo lsof -i :8080
 #### $ kill [PID of the process]
