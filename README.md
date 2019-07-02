@@ -1,9 +1,11 @@
 # heartbeat-kubernetes
-It is a measurement and analytic system for heart beat in order to help managing health.
-At first, I used the connection directly. But I realized it needs to manage the connection between the application and mysql server.
-So, I recommend to use myconnection (https://www.npmjs.com/package/express-myconnection)
+It is a measurement and analytic system for heart beat in order to help managing health.  
+<img src="https://user-images.githubusercontent.com/52392004/60531757-9b407b80-9d36-11e9-889e-d779216f76c5.png" width="90%"></img>  
 
-the case of directly connection which has a problem to sustain the connection 
+At first, I used the connection directly. But I realized it needs to manage the connection between the application and mysql server.  
+So, I recommend to use myconnection (https://www.npmjs.com/package/express-myconnection)  
+  
+the case of directly connection which has a problem to sustain the connection  
 ```c
 const express = require('express');
 // Create connection
@@ -62,13 +64,13 @@ $ mysql -h [server address] -u root -p
 
 [Acquisition API]  
 ### initialize package.json  
-$ npm init
+$ npm init  
 $ npm install --save mysql express express-myconnection -f  
 
 
 [Acquisition API]  
 $ curl -i localhost:8080/addaccount -H "Content-Type: application/json"  -d '{"id":"kyopark","name":"John"}'  
-$ curl -i localhost:8080/adduser -H "Content-Type: application/json"  -d '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
+$ curl -i localhost:8080/adduser -H "Content-Type: application/json"  -d   '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
 $ curl -i localhost:8080/adddata -H "Content-Type: application/json"  -d '{"time":1561553417713,"value":0.3}'  
 
 
@@ -87,10 +89,10 @@ $ curl localhost:8080/getusers  | python -m json.tool
 $ curl localhost:8080/getdata  | python -m json.tool  
 
 
-[Build]
+[Build]  
 $ docker build -t heartbeat:v1 .  
 
-[Heartbeat]
+[Heartbeat]  
 $ kubectl create -f k8s/heartbeat.yaml  
 To-do: I wil change the repository based on gitbub. Now I am still using RDS in Amazon.  
 
