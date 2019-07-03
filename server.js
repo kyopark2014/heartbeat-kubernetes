@@ -33,21 +33,22 @@ app.get('/createdb', (req, res) => {
             throw error;
         }
          
-        let sql = 'CREATE DATABASE IF NOT EXISTS my_db';
+        let sql = 'CREATE DATABASE IF NOT EXISTS my_db'; 
         conn.query(sql, (err, result) => {
             if(err) {
                 res.status(500).send(err.message)
                 throw err
             }
-            
+             
             console.log(result)
-            res.send('Database was created...')
+            if(result.insertId == 0) res.status(500).send('You already have the database.')
+            else                   res.status(200).send('The database was created.')
        }) 
     })
 })
 
 // Create table - account
-app.get('/createaccounttable', (req, response) => {
+app.get('/createaccounttable', (req, res) => {
     req.getConnection( (error, conn) => {
         if(error) {
             console.log('Connection Failure...')
@@ -56,57 +57,107 @@ app.get('/createaccounttable', (req, response) => {
         let sql = 'CREATE TABLE IF NOT EXISTS my_db.account(num int AUTO_INCREMENT, id VARCHAR(20) unique, name VARCHAR(20), PRIMARY KEY(num))'
         conn.query(sql, (err, result) => {
             if(err) {
-                response.status(500).send(err.message)
+                res.status(500).send(err.message)
                 throw err
             }
 
             console.log(result)
-            response.send('account table created...')
+
+            if(result.insertId == 0) res.status(500).send('You already have the table.')
+            else                   res.status(200).send('The table was created.')
         })
     })
 })
 
 // Create table - user
-app.get('/createusertable', (req, response) => {
+app.get('/createusertable', (req, res) => {
     req.getConnection( (error, conn) => {
         if(error) {
             console.log('Connection Failure...')
             throw error
         }
 
-        let sql = 'CREATE TABLE IF NOT EXISTS my_db.user(num int AUTO_INCREMENT, account_num int, name VARCHAR(20), gender VARCHAR(20), age int, PRIMARY KEY(num))'
+        let sql = 'CREATE TABLE IF NOT EXISTS my_db.user(num int AUTO_INCREMENT, account_num int NOT NULL, name VARCHAR(20), gender VARCHAR(20), age int, PRIMARY KEY(num))'
         conn.query(sql, (err, result) => {
             if(err) {
-                response.status(500).send(err.message)
+                res.status(500).send(err.message)
                 throw err
             }
             console.log(result);
-            response.send('User table created...')
+
+            if(result.insertId == 0) res.status(500).send('You already have the table.')
+            else                   res.status(200).send('The table was created.')
         })
     })
 })
 
 // Create table - data
-app.get('/createdatatable', (req, response) => {
+app.get('/createdatatable', (req, res) => {
     req.getConnection( (error, conn) => {
         if(error) {
             console.log('Connection Failure...')
             throw error
         }    
-        let sql = 'CREATE TABLE IF NOT EXISTS my_db.data(num BIGINT AUTO_INCREMENT, time BIGINT, value FLOAT(2.2),PRIMARY KEY(num))'
+        let sql = 'CREATE TABLE IF NOT EXISTS my_db.data(seq BIGINT AUTO_INCREMENT,account_id VARCHAR(20), user_name VARCHAR(20), time BIGINT, value FLOAT(3.3),PRIMARY KEY(seq))'
         conn.query(sql, (err, result) => {
             if(err) {
-                response.status(500).send(err.message)
+                res.status(500).send(err.message)
                 throw err
             }
             console.log(result)
-            response.send('Data table created...')
+
+            if(result.insertId == 0) res.status(500).send('You already have the table.')
+            else                   res.status(200).send('The table was created.')
+        })
+    })
+})
+
+// Create JJ table - which is required for Json to MySQL
+// To-do: JJ API will be removed
+app.get('/createJJtable', (req, res) => {
+    req.getConnection( (error, conn) => {
+        if(error) {
+            console.log('Connection Failure...')
+            throw error
+        }    
+        let sql = 'CREATE TABLE IF NOT EXISTS my_db.jj(seq INT AUTO_INCREMENT,num INT, PRIMARY KEY(seq))'
+        //let sql = 'CREATE TABLE IF NOT EXISTS my_db.jj(num int(10) unsigned NOT NULL)'   //num int(10) unsigned NOT NULL, PRIMARY KEY (num)
+        conn.query(sql, (err, result) => {
+            if(err) {
+                res.status(500).send(err.message)
+                throw err
+            }
+            console.log(result)
+
+            if(result.insertId == 0) res.status(500).send('You already have the database.')
+            else                   res.status(200).send('The database was created.')
+        })
+    })
+})
+
+// Initialize JJ
+app.get('/initializejj', (req, res) => {
+    req.getConnection( (error, conn) => {
+        if(error) {
+            console.log('Connection Failure...')
+            throw error
+        }   
+
+        let sql = 'INSERT INTO my_db.jj (num) VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31),(32),(33),(34),(35),(36),(37),(38),(39),(40),(41),(42),(43),(44),(45),(46),(47),(48),(49),(50),(51),(52),(53),(54),(55),(56),(57),(58),(59),(60),(61),(62),(63),(64),(65),(66),(67),(68),(69),(70),(71),(72),(73),(74),(75),(76),(77),(78),(79),(80),(81),(82),(83),(84),(85),(86),(87),(88),(89),(90),(91),(92),(93),(94),(95),(96),(97),(98),(99)'
+
+        console.log(sql);
+        conn.query(sql, (err,result) => {
+            if(err) throw err
+
+            console.log(result)
+            
+            res.send('Table JJ is intialized')
         })
     })
 })
 
 // check the duplication of the account
-app.get('/checkduplicatednaccount/:id', (req, res) => {
+app.get('/checkduplicatedaccount/:id', (req, res) => {
     req.getConnection( (error, conn) => {
         if(error) {
             console.log('Connection Failure...')
@@ -119,7 +170,7 @@ app.get('/checkduplicatednaccount/:id', (req, res) => {
             console.log(result)
 
             if(result == "") res.status(404).json( {errorMessage: "User was not found"})
-            else res.status(200).send(result)
+            else res.status(200).send("The account is already registered.")
         })
     })
 })
@@ -133,13 +184,14 @@ app.post('/addaccount', (req, res) => {
         }   
 
         let sql = 'INSERT INTO my_db.account (id,name) SELECT \''+ req.body.id+'\',\'' +req.body.name+'\' WHERE NOT EXISTS (SELECT id FROM my_db.account WHERE id = \''+req.body.id+'\')'
-        // INSERT INTO my_db.account (id, name) SELECT 'kyopark','john' FROM dual WHERE NOT EXISTS (SELECT id FROM my_db.account WHERE id = 'kyopark')
+
         console.log(sql);
         conn.query(sql, (err,result) => {
             if(err) throw err
 
             console.log(result)
-            res.send('account was added...')
+            if(result.insertId == 0) res.status(500).send('The name is duplicated.')
+            else                   res.status(200).send('The account was added successfully.')
         })
     })
 })
@@ -152,19 +204,20 @@ app.post('/adduser', (req, res) => {
             throw error
         }   
 
-        let post = {account_num: req.body.account_num, name: req.body.name, gender: req.body.gender, age: req.body.age}
-        console.log(post)
-        let sql = 'INSERT INTO my_db.user SET ?'
-        conn.query(sql, post, (err,result) => {
+        let sql = 'INSERT INTO my_db.user (name,gender,age,account_num) SELECT \''+req.body.name+'\',\''+req.body.gender+'\','+req.body.age+', (SELECT num from my_db.account WHERE id = \''+req.headers.account+'\')'+' WHERE NOT EXISTS (SELECT name FROM my_db.user WHERE name = \''+req.body.name+'\')'
+        console.log(sql);
+
+        conn.query(sql, (err,result) => {
             if(err) throw err
 
             console.log(result)
-            res.send('User was added...')
-        })
+            if(result.insertId == 0) res.status(500).send('This is a duplicated username.'), console.log('Failure')
+            else                   res.status(200).send('The username was added successfully.'), console.log("Success")
+        }) 
     })
 })
 
-// Insert Data
+// Insert Data - single 
 app.post('/adddata', (req, res) => {
     req.getConnection( (error, conn) => {
         if(error) {
@@ -172,19 +225,42 @@ app.post('/adddata', (req, res) => {
             throw error
         }   
 
-        let post = {time: req.body.time, value: req.body.value}
+        let post = {account_id: req.headers.account, user_name: req.headers.user, time: req.body.time, value: req.body.value}
         console.log(post);
         let sql = 'INSERT INTO my_db.data SET ?'
         conn.query(sql, post, (err,result) => {
             if(err) throw err
 
             console.log(result)
-            res.send('New Data was added...')
+            res.send('Success...')
         })
     })
 })
+// Insert Data - multiple
+app.post('/adddata_bulk/', (req, res) => {     
+    req.getConnection( (error, conn) => {
+        if(error) {
+            console.log('Connection Failure...')
+            throw error
+        }   
+      
+        console.log(req.body);
+        var body = JSON.stringify(req.body);
 
-function sleep(millis) {
+        let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+req.headers.account+'\',\''+req.headers.user+'\',JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].time\')),JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].value\')) FROM (SELECT \''+body+'\' AS B) AS A JOIN jj ON num < JSON_LENGTH(\''+body+'\');'      
+        // let sql = 'INSERT INTO my_db.data (time, value) SELECT JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].time\')),JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].value\')) FROM (SELECT \''+body+'\' AS B) AS A JOIN jj ON num < JSON_LENGTH(\''+body+'\');'      
+        console.log(sql);
+
+        conn.query(sql, (err,result) => {
+            if(err) throw err
+
+            console.log(result)
+            res.send('Success...')
+        })  
+    }) 
+})
+
+/*function sleep(millis) {
     return new Promise(resolve => setTimeout(resolve, millis));
 }
 // Insert Data - for testing
@@ -215,7 +291,7 @@ app.post('/adddatafortest', (req, res) => {
             res.send('New Data was added...')
         })
     })
-})
+}) */
 
 // show admin accounts
 app.get('/getaccounts', (req, res) => {
@@ -242,11 +318,15 @@ app.get('/getusers', (req, res) => {
             throw error
         }  
 
-        let sql = 'SELECT * FROM my_db.user'
+        let sql = 'SELECT * FROM my_db.user WHERE account_num = (SELECT num FROM my_db.account WHERE id = \''+req.headers.account+'\')'
+        console.log(sql);
+
         conn.query(sql, (err,result) => {
             if(err) throw err
             console.log(result)
-            res.status(200).send(result)
+
+            if(result == "")  res.status(404).send("No User")
+            else              res.status(200).send(result)
         })
     })
 })
@@ -259,33 +339,15 @@ app.get('/getdata', (req, res) => {
             throw error
         }  
 
-        let sql = 'SELECT * FROM my_db.data'
+        let sql = 'SELECT * FROM my_db.data WHERE user_name = \''+req.headers.user+'\' AND account_id = \''+req.headers.account+'\''
+        
+        console.log(sql)
         conn.query(sql, (err,result) => {
             if(err) throw err
             console.log(result)
-            res.status(200).send(result)
-        })
-    })
-})
 
-
-// show one of data
-app.get('/getdata/:num', (req, res) => {
-    req.getConnection( (error, conn) => {
-        if(error) {
-            console.log('Connection Failure...')
-            throw error
-        }     
-
-        let sql = 'SELECT * FROM my_db.data WHERE num = '+req.params.num;
-        console.log(sql);
-        
-        conn.query(sql, (err,result)  => {
-            if(err) throw err
-            console.log(result)
-
-            if(result == "") res.status(404).json( {errorMessage: "User was not found"})
-            else res.status(200).send(result)
+            if(result == "") res.status(404).send("No Data")
+            else             res.status(200).send(result)
         })
     })
 })
