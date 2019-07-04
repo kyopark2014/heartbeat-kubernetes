@@ -41,7 +41,7 @@ $ kubectl create -f k8s/mysql/local-volumes.yaml
 $ kubectl create -f k8s/mysql/mysql-pv-claim.yaml  
 ### create mysql  
 $ kubectl create -f k8s/mysql/mysql.yaml  
-$ kubectl create -f k8s/mysql-service.yaml  
+$ kubectl create -f k8s/mysql/mysql-service.yaml  
 #### [Reference](https://github.com/hongjsk/spring-petclinic-kubernetes/tree/master/k8s/mysql)  
 #### Setup the database in .bashrc  
 export DB_HOST='abcedfefewfdfdfdf-158449500.eu-west-2.elb.amazonaws.com';  
@@ -94,7 +94,8 @@ $ docker build -t heartbeat:v1 .
 
 [Heartbeat]  
 $ kubectl create -f k8s/heartbeat.yaml  
-To-do: I wil change the repository based on gitbub. Now I am still using RDS in Amazon.  
+$ kubectl create -f k8s/heartbeat-service.yaml  
+To-do: I wil change the repository from AWS to the repository of gitbub.  
 
 
 
