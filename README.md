@@ -69,24 +69,24 @@ $ npm install --save mysql express express-myconnection -f
 
 
 [Acquisition API]  
-$ curl -i localhost:8080/addaccount -H "Content-Type: application/json"  -d '{"id":"kyopark","name":"John"}'  
-$ curl -i localhost:8080/adduser -H "Content-Type: application/json"  -d   '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
-$ curl -i localhost:8080/adddata -H "Content-Type: application/json"  -d '{"time":1561553417713,"value":0.3}'  
+$ curl -i localhost/addaccount -H "Content-Type: application/json"  -d '{"id":"kyopark","name":"John"}'  
+$ curl -i localhost/adduser -H "Content-Type: application/json"  -d   '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
+$ curl -i localhost/adddata -H "Content-Type: application/json"  -d '{"time":1561553417713,"value":0.3}'  
 
 
 [Debug api - temporary]  
-$ curl -i localhost:8080/createdb     // create database  
-$ curl -i localhost:8080/createaccounttable  // create account table  
-$ curl -i localhost:8080/createusertable  // create user table  
-$ curl -i localhost:8080/createdatatable  // create data table  
-$ curl -i localhost:8080/checkduplicatednaccount/kyopark   // duplication check  
-$ curl -i localhost:8080/getaccounts | python -m json.tool    // show accounts  
-$ curl -i localhost:8080/getusers | python -m json.tool  
-$ curl -i localhost:8080/getdata  
+$ curl -i localhost/createdb     // create database  
+$ curl -i localhost/createaccounttable  // create account table  
+$ curl -i localhost/createusertable  // create user table  
+$ curl -i localhost/createdatatable  // create data table  
+$ curl -i localhost/checkduplicatednaccount/kyopark   // duplication check  
+$ curl -i localhost/getaccounts | python -m json.tool    // show accounts  
+$ curl -i localhost/getusers | python -m json.tool  
+$ curl -i localhost/getdata  
 
-$ curl localhost:8080/getaccounts | python -m json.tool   
-$ curl localhost:8080/getusers  | python -m json.tool  
-$ curl localhost:8080/getdata  | python -m json.tool  
+$ curl localhost/getaccounts | python -m json.tool   
+$ curl localhost/getusers  | python -m json.tool  
+$ curl localhost/getdata  | python -m json.tool  
 
 
 [Build]  
