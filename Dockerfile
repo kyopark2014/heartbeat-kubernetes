@@ -8,7 +8,6 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install -S express
-RUN npm install -g nodemon
 RUN npm install mysql --save
 RUN npm install body-parser --save
 RUN npm install express-myconnection --save
