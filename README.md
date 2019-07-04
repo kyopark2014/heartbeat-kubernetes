@@ -69,28 +69,25 @@ $ npm install --save mysql express express-myconnection -f
 
 
 [Acquisition API]  
-$ curl -i localhost/addaccount -H "Content-Type: application/json"  -d '{"id":"kyopark","name":"John"}'  
-$ curl -i localhost/adduser -H "Content-Type: application/json"  -d   '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
-$ curl -i localhost/adddata -H "Content-Type: application/json"  -d '{"time":1561553417713,"value":0.3}'  
+/addaccount '{"id":"kyopark","name":"John"}'  
+/adduser '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
+/adddata '{"time":1561553417713,"value":0.3}'  
 
 
 [Debug api - temporary]  
-$ curl -i localhost/createdb     // create database  
-$ curl -i localhost/createaccounttable  // create account table  
-$ curl -i localhost/createusertable  // create user table  
-$ curl -i localhost/createdatatable  // create data table  
-$ curl -i localhost/checkduplicatednaccount/kyopark   // duplication check  
-$ curl -i localhost/getaccounts | python -m json.tool    // show accounts  
-$ curl -i localhost/getusers | python -m json.tool  
-$ curl -i localhost/getdata  
-
-$ curl localhost/getaccounts | python -m json.tool   
-$ curl localhost/getusers  | python -m json.tool  
-$ curl localhost/getdata  | python -m json.tool  
+/createdb     // create database  
+/createaccounttable  // create account table  
+/createusertable  // create user table  
+/createdatatable  // create data table  
+/checkduplicatednaccount/kyopark   // duplication check  
+/getaccounts   // show all accounts  
+/getusers    // show all users involved with an account
+/getdata     // show all measured data allocated with a user.
 
 
 [Build]  
 $ docker build -t heartbeat:v1 .  
+
 
 [Heartbeat]  
 $ kubectl create -f k8s/heartbeat.yaml  
