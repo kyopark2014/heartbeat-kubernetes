@@ -13,3 +13,4 @@ nodeGroups:
     maxSize: 8
     ssh:
       allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
+availabilityZones: ["eu-west-2a", "eu-west-2b"]      
