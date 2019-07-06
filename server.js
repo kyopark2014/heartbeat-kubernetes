@@ -41,8 +41,16 @@ app.get('/createdb', (req, res) => {
             }
              
             console.log(result)
-            if(result.insertId == 0) res.status(500).send('You already have the database.')
-            else                   res.status(200).send('The database was created.')
+            if(result.insertId == 0) 
+                res.status(500).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not created, may already exists"
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                })   
        }) 
     })
 })
@@ -62,9 +70,16 @@ app.get('/createaccounttable', (req, res) => {
             }
 
             console.log(result)
-
-            if(result.insertId == 0) res.status(500).send('You already have the table.')
-            else                   res.status(200).send('The table was created.')
+            if(result.insertId == 0) 
+                res.status(500).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not created, may already exists"
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                })   
         })
     })
 })
@@ -85,8 +100,16 @@ app.get('/createusertable', (req, res) => {
             }
             console.log(result);
 
-            if(result.insertId == 0) res.status(500).send('You already have the table.')
-            else                   res.status(200).send('The table was created.')
+            if(result.insertId == 0) 
+                res.status(500).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not created, may already exists"
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                })   
         })
     })
 })
@@ -106,8 +129,16 @@ app.get('/createdatatable', (req, res) => {
             }
             console.log(result)
 
-            if(result.insertId == 0) res.status(500).send('You already have the table.')
-            else                   res.status(200).send('The table was created.')
+            if(result.insertId == 0) 
+                res.status(500).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not created, may already exists"
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                })   
         })
     })
 })
@@ -127,10 +158,18 @@ app.get('/createJJtable', (req, res) => {
                 res.status(500).send(err.message)
                 throw err
             }
+            
             console.log(result)
-
-            if(result.insertId == 0) res.status(500).send('You already have the database.')
-            else                   res.status(200).send('The database was created.')
+            if(result.insertId == 0) 
+                res.status(500).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not created, may already exists"
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                })             
         })
     })
 })
@@ -143,7 +182,7 @@ app.get('/initializejj', (req, res) => {
             throw error
         }   
 
-        let sql = 'INSERT INTO my_db.jj (num) VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31),(32),(33),(34),(35),(36),(37),(38),(39),(40),(41),(42),(43),(44),(45),(46),(47),(48),(49),(50),(51),(52),(53),(54),(55),(56),(57),(58),(59),(60),(61),(62),(63),(64),(65),(66),(67),(68),(69),(70),(71),(72),(73),(74),(75),(76),(77),(78),(79),(80),(81),(82),(83),(84),(85),(86),(87),(88),(89),(90),(91),(92),(93),(94),(95),(96),(97),(98),(99)'
+        let sql = 'INSERT INTO my_db.jj (num) VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31),(32),(33),(34),(35),(36),(37),(38),(39),(40),(41),(42),(43),(44),(45),(46),(47),(48),(49),(50),(51),(52),(53),(54),(55),(56),(57),(58),(59),(60),(61),(62),(63),(64),(65),(66),(67),(68),(69),(70),(71),(72),(73),(74),(75),(76),(77),(78),(79),(80),(81),(82),(83),(84),(85),(86),(87),(88),(89),(90),(91),(92),(93),(94),(95),(96),(97),(98),(99);'
 
         console.log(sql);
         conn.query(sql, (err,result) => {
@@ -151,7 +190,11 @@ app.get('/initializejj', (req, res) => {
 
             console.log(result)
             
-            res.send('Table JJ is intialized')
+            // res.send('Table JJ is intialized')
+            res.status(200).json({
+                resultCode: 0,
+                resultMessage:"Success",
+            })             
         })
     })
 })
@@ -169,8 +212,20 @@ app.get('/checkduplicatedaccount/:id', (req, res) => {
             if(err) throw err
             console.log(result)
 
-            if(result == "") res.status(404).json( {errorMessage: "User was not found"})
-            else res.status(200).send("The account is already registered.")
+            //if(result == "") res.status(404).json( {errorMessage: "User was not found"})
+            //else res.status(200).send("The account is already registered.")
+            if(result == "") 
+                res.status(404).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: No account in the server",
+                    account: req.params.id
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success: the account exists in the server",
+                    account: req.params.id
+                })               
         })
     })
 })
@@ -190,8 +245,18 @@ app.post('/addaccount', (req, res) => {
             if(err) throw err
 
             console.log(result)
-            if(result.insertId == 0) res.status(500).send('The name is duplicated.')
-            else                   res.status(200).send('The account was added successfully.')
+            if(result.insertId == 0) 
+                res.status(400).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not inserted, may duplicated",
+                    id: req.body.id,
+                    name: req.body.name}) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    id: req.body.id,
+                    name: req.body.name}) 
         })
     })
 })
@@ -211,8 +276,22 @@ app.post('/adduser', (req, res) => {
             if(err) throw err
 
             console.log(result)
-            if(result.insertId == 0) res.status(500).send('This is a duplicated username.'), console.log('Failure')
-            else                   res.status(200).send('The username was added successfully.'), console.log("Success")
+            if(result.insertId == 0) 
+                res.status(400).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not inserted, may duplicated",
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    age: req.body.age
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    age: req.body.age
+                }) 
         }) 
     })
 })
@@ -232,8 +311,13 @@ app.post('/adddata', (req, res) => {
             if(err) throw err
 
             console.log(result)
-            res.send('Success...')
-        })
+
+            res.status(200).json({
+                resultCode: 0,
+                resultMessage:"Success",
+                result: req.body
+            })              
+        })        
     })
 })
 // Insert Data - multiple
@@ -254,8 +338,14 @@ app.post('/adddata_bulk/', (req, res) => {
         conn.query(sql, (err,result) => {
             if(err) throw err
 
-            console.log(result)
-            res.send('Success...')
+            res.status(200).json({
+                resultCode: 0,
+                resultMessage:"Success",
+                result: req.body
+                //,addedCount: result.affectedRows
+            })  
+
+            console.log('# of inserted: '+result.affectedRows)
         })  
     }) 
 })
@@ -304,8 +394,13 @@ app.get('/getaccounts', (req, res) => {
         let sql = 'SELECT * FROM my_db.account'
         conn.query(sql, (err,result) => {
             if(err) throw err
+
             console.log(result)
-            res.status(200).send(result)
+            res.status(200).json({
+                resultCode: 0,
+                resultMessage:"Success",
+                result
+            })              
         })
     })
 })
@@ -323,10 +418,22 @@ app.get('/getusers', (req, res) => {
 
         conn.query(sql, (err,result) => {
             if(err) throw err
-            console.log(result)
 
-            if(result == "")  res.status(404).send("No User")
-            else              res.status(200).send(result)
+            console.log(result)
+            if(result.insertId == 0) 
+                res.status(404).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: No user in the account",
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    age: req.body.age
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    result
+                })         
         })
     })
 })
@@ -344,10 +451,20 @@ app.get('/getdata', (req, res) => {
         console.log(sql)
         conn.query(sql, (err,result) => {
             if(err) throw err
+            
             console.log(result)
-
-            if(result == "") res.status(404).send("No Data")
-            else             res.status(200).send(result)
+            if(result == "") 
+                res.status(404).json({
+                    resultCode: 1,
+                    resultMessage:"Failure: no data for the account and user",
+                    result
+                }) 
+            else 
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    result
+                })              
         })
     })
 })
