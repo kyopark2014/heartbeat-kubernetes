@@ -62,27 +62,12 @@ $ mysql -h [server address] -u root -p
 #### To-Do: I will upgrade this part using helm in order to easy deploment  
 
 
-[Acquisition API]  
 ### initialize package.json  
 $ npm init  
 $ npm install --save mysql express express-myconnection -f  
 
-
-[Acquisition API]  
-/addaccount '{"id":"kyopark","name":"John"}'  
-/adduser '{"account_num":1,"id":"kyopark","name":"John","gender":"male","age":25}'  
-/adddata '{"time":1561553417713,"value":0.3}'  
-
-
-[Debug api - temporary]  
-/createdb     // create database  
-/createaccounttable  // create account table  
-/createusertable  // create user table  
-/createdatatable  // create data table  
-/checkduplicatednaccount/kyopark   // duplication check  
-/getaccounts   // show all accounts  
-/getusers    // show all users involved with an account
-/getdata     // show all measured data allocated with a user.
+## API in Swagger Hub
+[Heartbeat](https://app.swaggerhub.com/apis-docs/kyopark2014/heartbeat/1.0.0)
 
 
 [Build]  
