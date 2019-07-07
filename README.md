@@ -75,7 +75,9 @@ var config = {
 		host: 'localhost',
 		port: '8080'
 	}
-}```
+}
+module.exports = config
+```
 
 
 #### check the prompt of mysql.   
