@@ -57,7 +57,11 @@ $ kubectl create -f k8s/mysql-configmap.yaml
 ### get the public ip address or domain  
 $ kubectl get service -o wide  
 ### check the connectivity of mysql using the earn address of the mysql server  
-$ mysql -h [server address] -u root -p  
+$ mysql -h ip-address -P port -u root -p
+### initialize DB table and values
+$ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-schema.sql
+$ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-data.sql
+  
 #### check the prompt of mysql.   
 #### To-Do: I will upgrade this part using helm in order to easy deploment  
 
