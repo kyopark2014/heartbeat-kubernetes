@@ -61,10 +61,25 @@ $ mysql -h ip-address -P port -u root -p
 ### initialize DB table and values
 $ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-schema.sql
 $ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-data.sql
-  
+### make config.js  
+```c
+var config = {
+	database: {
+		host:	  'localhost', 	// database host
+		user: 	  'root', 		// your database username
+		password: 'password', 		// your database password
+		port: 	  3306, 		// default MySQL port
+		db: 	  'my_db' 		// your database name
+	},
+	server: {
+		host: 'localhost',
+		port: '8080'
+	}
+}```
+
+
 #### check the prompt of mysql.   
 #### To-Do: I will upgrade this part using helm in order to easy deploment  
-
 
 ### initialize package.json  
 $ npm init  
@@ -73,10 +88,8 @@ $ npm install --save mysql express express-myconnection -f
 ## API in Swagger Hub
 [Heartbeat](https://app.swaggerhub.com/apis-docs/kyopark2014/heartbeat/1.0.0)
 
-
 [Build]  
 $ docker build -t heartbeat:v1 .  
-
 
 [Heartbeat]  
 $ kubectl create -f k8s/heartbeat.yaml  
