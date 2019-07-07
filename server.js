@@ -303,21 +303,34 @@ app.post('/adddata', (req, res) => {
             console.log('Connection Failure...')
             throw error
         }   
+        console.log(req.body);
+        //let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+ req.headers.account+'\',\''+ req.headers.user +'\',\''+req.body.time+'\',\''+req.body.value+'\' WHERE EXISTS (SELECT id from my_db.account WHERE id =\'' + req.headers.account + '\') WHERE EXISTS (SELECT name from my_db.user WHERE name =\'' + req.headers.user + '\')'  
+        let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+ req.headers.account+'\',\''+ req.headers.user +'\',\''+req.body.time+'\',\''+req.body.value+'\' WHERE EXISTS (SELECT id from my_db.account WHERE id =\'' + req.headers.account + '\')'  
+        
+        
+        console.log(sql); 
 
-        let post = {account_id: req.headers.account, user_name: req.headers.user, time: req.body.time, value: req.body.value}
-        console.log(post);
-        let sql = 'INSERT INTO my_db.data SET ?'
-        conn.query(sql, post, (err,result) => {
+        //conn.query(sql, post, (err,result) => {
+        conn.query(sql, (err,result) => {    
             if(err) throw err
 
             console.log(result)
 
-            res.status(200).json({
-                resultCode: 0,
-                resultMessage:"Success",
-                result: req.body
-            })              
-        })        
+            if(result.insertId == 0) 
+                res.status(400).json({
+                    resultCode: 2,
+                    resultMessage:"Failure: Not inserted, Not match Account",
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    age: req.body.age
+                }) 
+            else
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    result: req.body
+                })              
+            })        
     })
 })
 // Insert Data - multiple
