@@ -7,17 +7,15 @@ app.use(bodyParser.json())
 // Create connection
 var mysql = require('mysql')
 
-var DB_HOST = process.env.DB_HOST;
-var DB_USER = process.env.DB_USER;
-var DB_PASS = process.env.DB_PASS;
-var DB_NAME = process.env.DB_NAME;
-
 var myConnection  = require('express-myconnection')
+
+var config = require('./config')
 var dbOptions = {
-    host : DB_HOST,
-    user : DB_USER,
-    password : DB_PASS,
-    database : DB_NAME
+	host:	  config.database.host,
+	user: 	  config.database.user,
+	password: config.database.password,
+//	port: 	  config.database.port, 
+	database: config.database.db
 }
 
 // single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
