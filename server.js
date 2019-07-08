@@ -39,7 +39,8 @@ app.post('/addaccount', (req, res) => {
 
             console.log(result)
             if(result.insertId == 0) 
-                res.status(400).json({
+                // res.status(400).json({  
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error 
                     resultCode: 2,
                     resultMessage:"Failure: Not inserted, may duplicated",
                     id: req.body.id,
@@ -67,10 +68,9 @@ app.get('/checkduplicatedaccount/:id', (req, res) => {
             if(err) throw err
             console.log(result)
 
-            //if(result == "") res.status(404).json( {errorMessage: "User was not found"})
-            //else res.status(200).send("The account is already registered.")
             if(result == "") 
-                res.status(404).json({
+                // res.status(404).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
                     resultCode: 2,
                     resultMessage:"Failure: No account in the server",
                     account: req.params.id
@@ -101,7 +101,8 @@ app.post('/adduser', (req, res) => {
 
             console.log(result)
             if(result.insertId == 0) 
-                res.status(400).json({
+                // res.status(400).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
                     resultCode: 2,
                     resultMessage:"Failure: Not inserted, may duplicated",
                     name: req.body.name,
@@ -141,7 +142,8 @@ app.post('/adddata', (req, res) => {
             console.log(result)
 
             if(result.insertId == 0) 
-                res.status(400).json({
+                // res.status(400).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
                     resultCode: 2,
                     resultMessage:"Failure: Not inserted, Not match Account",
                     name: req.body.name,
@@ -175,12 +177,21 @@ app.post('/adddata_bulk/', (req, res) => {
         conn.query(sql, (err,result) => {
             if(err) throw err
 
-            res.status(200).json({
-                resultCode: 0,
-                resultMessage:"Success",
-                result: req.body
-                //,addedCount: result.affectedRows
-            })  
+            if(result.insertId == 0) 
+                // res.status(400).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
+                    resultCode: 2,
+                    resultMessage:"Failure: Not inserted, Not match Account",
+                    name: req.body.name,
+                    gender: req.body.gender,
+                    age: req.body.age
+                }) 
+            else
+                res.status(200).json({
+                    resultCode: 0,
+                    resultMessage:"Success",
+                    result: req.body
+                })              
 
             console.log('# of inserted: '+result.affectedRows)
         })  
@@ -258,7 +269,8 @@ app.get('/getusers', (req, res) => {
 
             console.log(result)
             if(result.insertId == 0) 
-                res.status(404).json({
+                // res.status(404).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
                     resultCode: 2,
                     resultMessage:"Failure: No user in the account",
                     name: req.body.name,
@@ -291,7 +303,8 @@ app.get('/getdata', (req, res) => {
             
             console.log(result)
             if(result == "") 
-                res.status(404).json({
+                // res.status(404).json({
+                res.status(200).json({  // Based on Client request, resultCode represents the state of response. i.e) 0: normal, others: error
                     resultCode: 1,
                     resultMessage:"Failure: no data for the account and user",
                     result
