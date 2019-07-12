@@ -50,18 +50,18 @@ export DB_PASS='passwd';
 export DB_NAME='database';  
 
 
-### create mysql-credential Secret  
+### Create mysql-credential Secret  
 $ kubectl create secret generic mysql-credential --from-file=./username --from-file=./password  
-### set configmap  
+### Set configmap  
 $ kubectl create -f k8s/mysql-configmap.yaml  
-### get the public ip address or domain  
+### Get the public ip address or domain  
 $ kubectl get service -o wide  
-### check the connectivity of mysql using the earn address of the mysql server  
+### Check the connectivity of mysql using the earn address of the mysql server  
 $ mysql -h ip-address -P port -u root -p
-### initialize DB table and values
+### Initialize DB table and values
 $ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-schema.sql
 $ mysql -h $DB_HOME -u root -p < k8s/mysql/sql/mysql-data.sql
-### make config.js  
+### Make config.js  
 ```c
 var config = {
 	database: {
@@ -80,14 +80,21 @@ module.exports = config
 ```
 
 
-#### check the prompt of mysql.   
+#### Check the prompt of mysql.   
 #### To-Do: I will upgrade this part using helm in order to easy deploment  
 
-### initialize package.json  
+### Initialize package.json  
 $ npm init  
 $ npm install --save mysql express express-myconnection -f  
 
-## API in Swagger Hub
+## API in Swagger Hub  
+#### /addaccount  
+#### /adduser  
+#### /adddata  
+#### /adddata_bulk  
+#### /checkduplicatedaccount  
+#### /getusers  
+#### /getdata  
 [Heartbeat](https://app.swaggerhub.com/apis-docs/kyopark2014/heartbeat/1.0.0)
 
 [Build]  
@@ -98,6 +105,26 @@ $ kubectl create -f k8s/heartbeat.yaml
 $ kubectl create -f k8s/heartbeat-service.yaml  
 To-do: I wil change the repository from AWS to the repository of gitbub.  
 
+[Monitoring]   
+#### Install prometheus  
+$ cd charts/prometheus  
+$ helm install -f values.yaml stable/prometheus --name prometheus --namespace prometheus  
+
+#### Expose prometheus  
+$ export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")  
+$ kubectl --namespace prometheus port-forward $POD_NAME 9090  
+browser: http://localhost:9090
+
+#### Install grafana  
+$ cd charts/grafana  
+$ helm install -f values.yaml stable/grafana --name grafana --namespace grafana  
+
+#### Check password  
+$ kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo  
+
+#### Expose grafana  
+$ export POD_NAME=$(kubectl get pods --namespace grafana -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")  
+$ kubectl --namespace grafana port-forward $POD_NAME 3000  
 
 
 # Troubleshoot
@@ -106,3 +133,4 @@ There is a zombie process using 8080.
 So, find the process and then kill it as bellow:
 #### $ sudo lsof -i :8080
 #### $ kill [PID of the process]
+
