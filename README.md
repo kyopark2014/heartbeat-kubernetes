@@ -88,13 +88,13 @@ $ npm init
 $ npm install --save mysql express express-myconnection -f  
 
 ## API in Swagger Hub  
-#### /addaccount  
-#### /adduser  
-#### /adddata  
-#### /adddata_bulk  
-#### /checkduplicatedaccount  
-#### /getusers  
-#### /getdata  
+/addaccount  
+/adduser  
+/adddata  
+/adddata_bulk  
+/checkduplicatedaccount  
+/getusers  
+/getdata  
 [Heartbeat](https://app.swaggerhub.com/apis-docs/kyopark2014/heartbeat/1.0.0)
 
 [Build]  
@@ -127,8 +127,8 @@ $ export POD_NAME=$(kubectl get pods --namespace grafana -l "app=grafana,release
 $ kubectl --namespace grafana port-forward $POD_NAME 3000  
 
 #### Auto scaling
-$ helm install -f charts/metrics-server/values.yaml stable/metrics-server --name metrics-server 
-$ kubectl create -f k8s/autoscaling.yaml 
+$ helm install -f charts/metrics-server/values.yaml stable/metrics-server --name metrics-server  
+$ kubectl create -f k8s/autoscaling.yaml  
 
 # Troubleshoot
 ### Error: listen EADDRINUSE: address already in use :::8080
