@@ -126,6 +126,9 @@ $ kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-passw
 $ export POD_NAME=$(kubectl get pods --namespace grafana -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")  
 $ kubectl --namespace grafana port-forward $POD_NAME 3000  
 
+#### Auto scaling
+$ helm install -f charts/metrics-server/values.yaml stable/metrics-server --name metrics-server 
+$ kubectl create -f k8s/autoscaling.yaml 
 
 # Troubleshoot
 ### Error: listen EADDRINUSE: address already in use :::8080

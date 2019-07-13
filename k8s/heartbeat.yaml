@@ -18,6 +18,9 @@ spec:
       - image: own repository 
         imagePullPolicy: Always
         name: heartbeat
+        resources:
+          requests:
+            cpu: 500m
         ports:
         - containerPort: 8080
           name: heartbeat
