@@ -130,6 +130,12 @@ $ kubectl --namespace grafana port-forward $POD_NAME 3000
 $ helm install -f charts/metrics-server/values.yaml stable/metrics-server --name metrics-server  
 $ kubectl create -f k8s/autoscaling.yaml  
 
+#### Nginx-Ingress
+$ helm install -f values.yaml stable/nginx-ingress --name nginx-ingress --namespace nginx-ingress --set controller.metrics.enabled=true
+- upgread
+$ helm upgrade --reuse-values -f values.yaml nginx-ingress stable/nginx-ingress
+$ kubectl create -f ingress.yaml
+
 # Troubleshoot
 ### Error: listen EADDRINUSE: address already in use :::8080
 There is a zombie process using 8080. 
