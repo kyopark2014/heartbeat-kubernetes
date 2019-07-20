@@ -39,7 +39,7 @@ config:
     number_of_files: 5
 
   output.logstash: 
-    hosts: ["logstash.logstash.svc.cluster.local:5044"] 
+    hosts: ["logstash.default.svc.cluster.local:5044"] 
 
   # When a key contains a period, use this format for setting values on the command line:
   # --set config."http\.enabled"=true

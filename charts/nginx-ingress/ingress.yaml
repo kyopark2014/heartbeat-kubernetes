@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.bluemix.net/rewrite-path: "serviceName=grafana rewrite=/;serviceName=prometheus rewrite=/;serviceName=kibana rewrite=/;"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  name: api-ingress
+spec:
+  rules:
+  - host: 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: heartbeat
+          servicePort: 8080
+      - path: /grafana/
+        backend:
+          serviceName: grafana
+          servicePort: 3000 
+      - path: /prometheus/
+        backend:
+          serviceName: prometheus-server
+          servicePort: 9090
+      - path: /kibana/
+        backend:
+          serviceName: kibana 
+          servicePort: 5601 
+
