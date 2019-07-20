@@ -20,6 +20,7 @@ config:
         - /var/log/*.log
         - /var/log/messages
         - /var/log/syslog
+        - /tmp/log/heartbeat*.log
     - type: docker
       containers.ids:
       - "*"
@@ -36,6 +37,9 @@ config:
     filename: filebeat
     rotate_every_kb: 10000
     number_of_files: 5
+
+  output.logstash: 
+    hosts: ["logstash.logstash.svc.cluster.local:5044"] 
 
   # When a key contains a period, use this format for setting values on the command line:
   # --set config."http\.enabled"=true
