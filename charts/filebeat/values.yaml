@@ -20,7 +20,7 @@ config:
         - /var/log/*.log
         - /var/log/messages
         - /var/log/syslog
-        - /tmp/log/heartbeat*.log
+        - /var/log/pods/*
     - type: docker
       containers.ids:
       - "*"
@@ -33,13 +33,16 @@ config:
                 kubernetes.container.name: "filebeat"
 
   output.file:
+    enabled: false
     path: "/usr/share/filebeat/data"
     filename: filebeat
     rotate_every_kb: 10000
     number_of_files: 5
 
-  output.logstash: 
-    hosts: ["logstash.default.svc.cluster.local:5044"] 
+  output.logstash:
+    hosts: ["logstash.default.svc.cluster.local:5044"]
+    #loadbalance: true   
+    index: filebeat
 
   # When a key contains a period, use this format for setting values on the command line:
   # --set config."http\.enabled"=true
@@ -189,3 +192,4 @@ monitoring:
   exporterPort: 9479
   ## Filebeat service port, which exposes Prometheus metrics
   targetPort: 9479
+
