@@ -20,13 +20,27 @@ var dbOptions = {
 
 var logger = require('./logger') 
 
-// single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
-// pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.
-// request - creates new connection per each request, and automatically closes it at the response end.
+/* single - creates single database connection for an application instance. Connection is never closed. In case of disconnection it will try to reconnect again as described in node-mysql docs.
+   pool - creates pool of connections on an app instance level, and serves a single connection from pool per request. The connections is auto released to the pool at the response end.
+   request - creates new connection per each request, and automatically closes it at the response end. */
 app.use(myConnection(mysql, dbOptions, 'pool'))
 
 var crypto = require('crypto')
 var datetime = require('node-datetime')
+
+function printRequestlog(req) {
+    var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
+    const request = {'type':'request','method':req.method,'host':req.headers.host,'url':req.url,'ip':req.ip,'request-id':request_id,'req-header':req.headers,'body':req.body};
+    logger.info(JSON.stringify(request));
+
+    return request_id;
+}
+
+function printResponselog(request_id,resultcode,resultMessage) {
+    // logger.info('Response: resultcode: 0, resultMessage: Success: '+JSON.stringify(result)+', request_id: '+request_id)
+    const response={'type':'response','request-id':request_id,'resultcode':resultcode,'resultMessage':resultMessage}
+    logger.info(JSON.stringify(response));
+}
 
 // Insert account
 app.post('/addaccount', (req, res) => {
@@ -36,8 +50,7 @@ app.post('/addaccount', (req, res) => {
             throw error
         }   
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
 
         let sql = 'INSERT INTO my_db.account (id,name) SELECT \''+ req.body.id+'\',\'' +req.body.name+'\' WHERE NOT EXISTS (SELECT id FROM my_db.account WHERE id = \''+req.body.id+'\')'
 
@@ -57,7 +70,7 @@ app.post('/addaccount', (req, res) => {
                     resultMessage:"Failure: Not inserted, may duplicated",
                     id: req.body.id,
                     name: req.body.name}) 
-                logger.info('Response: resultcode: 2, resultMessage: Failure: Not inserted, may duplicated, request_id: '+request_id)
+                printResponselog(request_id,2,"Failure: Not inserted, may duplicated") 
             }                
             else {
                 res.status(200).json({
@@ -66,7 +79,7 @@ app.post('/addaccount', (req, res) => {
                     id: req.body.id,
                     name: req.body.name}) 
 
-                logger.info('Response: resultcode: 0, resultMessage: Success, request_id: '+request_id)
+                printResponselog(request_id,0,"Success")  
             }
         })
     })
@@ -80,8 +93,7 @@ app.get('/checkduplicatedaccount/:id', (req, res) => {
             throw error
         }   
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
         
         let sql = 'SELECT * FROM my_db.account WHERE id = "'+req.params.id+'"'
         logger.debug('DB query: '+sql);
@@ -98,8 +110,8 @@ app.get('/checkduplicatedaccount/:id', (req, res) => {
                     resultMessage:"Failure: No account in the server",
                     account: req.params.id
                 }) 
-
-                logger.info('Response: resultcode: 2, resultMessage: Failure: No account in the server, request_id: '+request_id)
+                
+                printResponselog(request_id,2,"Failure: No account in the server")  
             } else {
                 res.status(200).json({
                     resultCode: 0,
@@ -107,7 +119,7 @@ app.get('/checkduplicatedaccount/:id', (req, res) => {
                     account: req.params.id
                 })  
 
-                logger.info('Response: resultcode: 0, resultMessage: Success: the account exists in the server, request_id: '+request_id)
+                printResponselog(request_id,0,"Success: the account exists in the server")  
             }             
         })
     })
@@ -121,8 +133,7 @@ app.post('/adduser', (req, res) => {
             throw error
         }   
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
 
         let sql = 'INSERT INTO my_db.user (name,gender,age,account_num) SELECT \''+req.body.name+'\',\''+req.body.gender+'\','+req.body.age+', (SELECT num from my_db.account WHERE id = \''+req.headers.account+'\')'+' WHERE NOT EXISTS (SELECT name FROM my_db.user WHERE name = \''+req.body.name+'\')'
         logger.debug('DB query: '+sql);
@@ -142,8 +153,8 @@ app.post('/adduser', (req, res) => {
                     gender: req.body.gender,
                     age: req.body.age
                 }) 
-
-                logger.info('Response: resultcode: 2, resultMessage: Failure: Not inserted, may duplicated, request_id: '+request_id)
+               
+                printResponselog(request_id,2,"Failure: Not inserted, may duplicated")  
             } else {
                 res.status(200).json({
                     resultCode: 0,
@@ -153,7 +164,7 @@ app.post('/adduser', (req, res) => {
                     age: req.body.age
                 }) 
 
-                logger.info('Response: resultcode: 0, resultMessage: Success: the user added in the server, request_id: '+request_id)
+                printResponselog(request_id,0,"Success: the user added in the server")  
             }
         }) 
     })
@@ -167,8 +178,7 @@ app.post('/adddata', (req, res) => {
             throw error
         }   
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
 
         //let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+ req.headers.account+'\',\''+ req.headers.user +'\',\''+req.body.time+'\',\''+req.body.value+'\' WHERE EXISTS (SELECT id from my_db.account WHERE id =\'' + req.headers.account + '\') WHERE EXISTS (SELECT name from my_db.user WHERE name =\'' + req.headers.user + '\')'  
         let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+ req.headers.account+'\',\''+ req.headers.user +'\',\''+req.body.time+'\',\''+req.body.value+'\' WHERE EXISTS (SELECT id from my_db.account WHERE id =\'' + req.headers.account + '\')'  
@@ -191,8 +201,8 @@ app.post('/adddata', (req, res) => {
                     gender: req.body.gender,
                     age: req.body.age
                 }) 
-
-                logger.info("Response: resultcode: 2, resultMessage: Failure: the account doesn't exist, request_id: "+request_id)
+                
+                printResponselog(request_id,2,"Failure: Not inserted, the account doesn't exist")  
             } else {
                 res.status(200).json({
                     resultCode: 0,
@@ -200,11 +210,13 @@ app.post('/adddata', (req, res) => {
                     result: req.body
                 })  
 
-                logger.info('Response: resultcode: 0, resultMessage: Success: the data added in ther server, request_id: '+request_id)
+                printResponselog(request_id,0,"Success: the data added in ther server")  
             }            
         })        
     })
 })
+
+
 // Insert Data - multiple
 app.post('/adddata_bulk/', (req, res) => {     
     req.getConnection( (error, conn) => {
@@ -213,13 +225,11 @@ app.post('/adddata_bulk/', (req, res) => {
             throw error
         }   
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
         
         var body = JSON.stringify(req.body);
-
         let sql = 'INSERT INTO my_db.data (account_id, user_name, time, value) SELECT \''+req.headers.account+'\',\''+req.headers.user+'\',JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].time\')),JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].value\')) FROM (SELECT \''+body+'\' AS B) AS A JOIN jj ON num < JSON_LENGTH(\''+body+'\');'      
-        // let sql = 'INSERT INTO my_db.data (time, value) SELECT JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].time\')),JSON_EXTRACT(\''+body+'\',CONCAT(\'$[\', num, \'].value\')) FROM (SELECT \''+body+'\' AS B) AS A JOIN jj ON num < JSON_LENGTH(\''+body+'\');'      
+
         logger.debug('DB query: '+sql);
 
         conn.query(sql, (err,result) => {
@@ -238,7 +248,7 @@ app.post('/adddata_bulk/', (req, res) => {
                     age: req.body.age
                 }) 
 
-                logger.info('Response: resultcode: 2, resultMessage: Failure: Not inserted, Not match Account, request_id: '+request_id)
+                printResponselog(request_id,2,"Failure: Not inserted, Not match Account")  
             } else {
                 res.status(200).json({
                     resultCode: 0,
@@ -246,10 +256,8 @@ app.post('/adddata_bulk/', (req, res) => {
                     result: req.body
                 })  
 
-                logger.info('Response: resultcode: 0, resultMessage: Success: the data added in ther server, request_id: '+request_id)
+                printResponselog(request_id,0,"Success: the data added in ther server")  
             }            
-
-//            console.log('# of inserted: '+result.affectedRows)
         })  
     }) 
 })
@@ -287,6 +295,8 @@ app.post('/adddatafortest', (req, res) => {
     })
 }) */
 
+
+
 // show admin accounts
 app.get('/getaccounts', (req, res) => {
     req.getConnection( (error, conn) => {
@@ -295,9 +305,8 @@ app.get('/getaccounts', (req, res) => {
             throw error
         }  
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
-
+        var request_id = printRequestlog(req)
+        
         let sql = 'SELECT * FROM my_db.account'
         logger.debug('DB query: '+sql)
 
@@ -310,10 +319,11 @@ app.get('/getaccounts', (req, res) => {
                 result
             })        
             
-            logger.info('Response: resultcode: 0, resultMessage: Success: '+JSON.stringify(result)+', request_id: '+request_id)
+            printResponselog(request_id,0,result)
         })
     })
 })
+
 
 // show user accounts
 app.get('/getusers', (req, res) => {
@@ -323,8 +333,7 @@ app.get('/getusers', (req, res) => {
             throw error
         }  
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
         
         let sql = 'SELECT * FROM my_db.user WHERE account_num = (SELECT num FROM my_db.account WHERE id = \''+req.headers.account+'\')'
         logger.debug('DB query: '+sql)
@@ -342,14 +351,15 @@ app.get('/getusers', (req, res) => {
                     age: req.body.age
                 }) 
 
-                logger.info('Response: resultcode: 2, resultMessage: Failure: No user in the account, request_id: '+request_id)
+                printResponselog(request_id,2,"Failure: No user in the account")
             } else {
                 res.status(200).json({
                     resultCode: 0,
                     resultMessage:"Success",
                     result
                 })  
-                logger.info('Response: resultcode: 0, resultMessage: Success: '+JSON.stringify(result)+', request_id: '+request_id)
+                
+                printResponselog(request_id,0,result)
             }       
         })
     })
@@ -363,8 +373,7 @@ app.get('/getdata', (req, res) => {
             throw error
         }  
 
-        var request_id = crypto.createHash('md5').update(datetime.create().getTime()+req.ip+Math.random()).digest('hex');
-        logger.info('Request: ' + req.method + ' '+ req.headers.host + req.url +' (ip: '+req.ip+') request_id: '+request_id+'\n  req-header:'+ JSON.stringify(req.headers)+'\n  req-body: '+JSON.stringify(req.body))
+        var request_id = printRequestlog(req)
 
         let sql = 'SELECT * FROM my_db.data WHERE user_name = \''+req.headers.user+'\' AND account_id = \''+req.headers.account+'\''
         logger.debug('DB query: '+sql)
@@ -380,14 +389,15 @@ app.get('/getdata', (req, res) => {
                     result
                 }) 
 
-                logger.info('Response: resultcode: 2, resultMessage: Failure: No data for the account and user, request_id: '+request_id)
+                printResponselog(request_id,2,"Failure: No data for the account and user")
             } else {
                 res.status(200).json({
                     resultCode: 0,
                     resultMessage:"Success",
                     result
                 })  
-                logger.info('Response: resultcode: 0, resultMessage: Success: '+JSON.stringify(result)+', request_id: '+request_id)
+
+                printResponselog(request_id,2,result)
             }            
         })
     })
