@@ -19,7 +19,7 @@
   "homepage": "https://github.com/kyopark2014/heartbeat#readme",
   "dependencies": {
     "date-utils": "^1.2.21",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-myconnection": "^1.0.4",
     "jq": "^1.7.2",
     "mysql": "^2.17.1",
